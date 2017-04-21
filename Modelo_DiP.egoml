@@ -1,0 +1,107 @@
+<?xml version="1.0" standalone="yes" ?>
+<script>
+    <property key="dff.date" value="2017-Apr-20 20:59:51" />
+    <property key="dff.version" value="3.0.17.20160922" />
+    <property key="metadata.author" value="JF Mas" />
+    <property key="metadata.description" value="The Difference in Change Potential (DiP) is an assessment method is based in the Peirce Skill Score (PSS). It is based on the difference between the mean potential in the areas of change and the mean potential in the areas of no (Eastman et al. 2005, Pérez-Vega et al. 2012). A value of one indicates a perfect agreement between the change potential and the observed changes, while a value close of 0 show a random behavior.&#x0A;&#x0A;Eastman, J.R., Solorzano, L.A., and Van Fossen, M.E., 2005. Transition potential modeling for land cover change. In: D.J. Maguire, M. Batty, and M.F. Goodchild, eds. GIS, spatial analysis, and modeling. Redland, CA: ESRI, 357–385.&#x0A;Pérez-Vega, A., Mas, J.F., Ligmann-Zielinska, A., 2012, “Comparing two approaches to land use/cover change modelling and their implications for the assessment of biodiversity loss in a deciduous tropical forest”, Environmental Modelling and Software, 29(1), 11-23" />
+    <property key="metadata.keywords" value="Change Potencial, model assessment, prediction, agreement, probabilities" />
+    <property key="metadata.notes" value="Aknowledgments: Proyecto SEP CONACYT 178816 ¿Puede la modelación espacial ayudarnos a entender los procesos de cambio de cobertura/uso del suelo y de degradación ambiental ?" />
+    <property key="metadata.organization" value="CIGA-UNAM" />
+    <property key="metadata.showproperties" value="no" />
+    <property key="metadata.title" value="Difference in Change Potential DiP" />
+    <property key="metadata.version" value="1.0" />
+    <functor name="LoadMap">
+        <property key="dff.functor.alias" value="ChangePotentialMap" />
+        <property key="dff.functor.comment" value="Change potential map" />
+        <property key="viewer.map" value="yes" />
+        <inputport name="filename">&quot;example1/inputs/probability1994.rst&quot;</inputport>
+        <inputport name="nullValue">.none</inputport>
+        <inputport name="loadAsSparse">.no</inputport>
+        <inputport name="suffixDigits">0</inputport>
+        <inputport name="step">.none</inputport>
+        <inputport name="workdir">.none</inputport>
+        <outputport name="map" id="v1" />
+    </functor>
+    <functor name="ExtractCategoricalMapAttributes">
+        <property key="dff.functor.alias" value="extractCategoricalMapAttributes5005" />
+        <property key="viewer.attributes" value="yes" />
+        <inputport name="map" peerid="v1" />
+        <inputport name="categoryMap" peerid="v3" />
+        <inputport name="extractStatisticalAttributes">.yes</inputport>
+        <outputport name="attributes" id="v2" />
+    </functor>
+    <functor name="LoadCategoricalMap">
+        <property key="dff.functor.alias" value="ChangeBinaryMap" />
+        <property key="dff.functor.comment" value="Binary map of change" />
+        <property key="dff.functor.extendedcomment" value="1: change, 0 no change" />
+        <property key="viewer.map" value="yes" />
+        <inputport name="filename">&quot;example1/inputs/def9499.rst&quot;</inputport>
+        <inputport name="nullValue">.none</inputport>
+        <inputport name="loadAsSparse">.no</inputport>
+        <inputport name="suffixDigits">0</inputport>
+        <inputport name="step">.none</inputport>
+        <inputport name="workdir">.none</inputport>
+        <outputport name="map" id="v3" />
+    </functor>
+    <functor name="GetTableValue">
+        <property key="dff.functor.alias" value="getTableValue5178" />
+        <property key="dff.functor.comment" value="H: Change Potential Mean for Change" />
+        <property key="viewer.result" value="yes" />
+        <inputport name="table" peerid="v2" />
+        <inputport name="keys" peerid="v5" />
+        <inputport name="column">&quot;Value&quot;</inputport>
+        <inputport name="valueIfNotFound">.none</inputport>
+        <outputport name="result" id="v4" />
+    </functor>
+    <functor name="Tuple">
+        <property key="dff.functor.alias" value="tuple5179" />
+        <property key="viewer.object" value="yes" />
+        <inputport name="constant">[ 13, 1 ]</inputport>
+        <outputport name="object" id="v5" />
+    </functor>
+    <functor name="GetTableValue">
+        <property key="dff.functor.alias" value="getTableValue5178" />
+        <property key="dff.functor.comment" value="F: Change Potential Mean for No Change" />
+        <property key="viewer.result" value="yes" />
+        <inputport name="table" peerid="v2" />
+        <inputport name="keys" peerid="v7" />
+        <inputport name="column">&quot;Value&quot;</inputport>
+        <inputport name="valueIfNotFound">.none</inputport>
+        <outputport name="result" id="v6" />
+    </functor>
+    <functor name="Tuple">
+        <property key="dff.functor.alias" value="tuple5179" />
+        <property key="viewer.object" value="yes" />
+        <inputport name="constant">[ 13, 0 ]</inputport>
+        <outputport name="object" id="v7" />
+    </functor>
+    <functor name="RealValue">
+        <property key="dff.functor.alias" value="OutputDiP" />
+        <property key="dff.functor.comment" value="DiP" />
+        <property key="dff.functor.extendedcomment" value="Difference in change Potential" />
+        <property key="viewer.object" value="yes" />
+        <inputport name="constant" peerid="v8" />
+    </functor>
+    <containerfunctor name="CalculateValue">
+        <property key="dff.container.collapsed" value="no" />
+        <property key="dff.functor.alias" value="calculateValue5184" />
+        <property key="dff.functor.comment" value="DiP" />
+        <property key="dff.functor.extendedcomment" value="H - F" />
+        <property key="viewer.result" value="yes" />
+        <inputport name="expression">[&#x0A;    v1 - v2&#x0A;]</inputport>
+        <inputport name="defaultValue">.none</inputport>
+        <outputport name="result" id="v8" />
+        <functor name="NumberValue">
+            <property key="dff.functor.alias" value="numberValue5185" />
+            <property key="dff.functor.comment" value="H" />
+            <inputport name="value" peerid="v4" />
+            <inputport name="valueNumber">1</inputport>
+        </functor>
+        <functor name="NumberValue">
+            <property key="dff.functor.alias" value="numberValue5185" />
+            <property key="dff.functor.comment" value="F" />
+            <inputport name="value" peerid="v6" />
+            <inputport name="valueNumber">2</inputport>
+        </functor>
+    </containerfunctor>
+</script>
